@@ -1,3 +1,4 @@
+import { ApiError } from "../../exceptions/handelers/apiError";
 import pool from "../../config/dbConnect";
 import User from "../model/user";
 import type { ResultSetHeader } from "mysql2";
@@ -11,9 +12,11 @@ class UserDao {
          );
          console.log("User saved with ID:", result.insertId);
          return result.insertId;
-      } catch (error) {
-         console.error("Error saving user:", error);
-         return null;
+      } catch (error: any) {
+         if (error.code === "ER_DUP_ENTRY") {
+            throw new ApiError(409, `Email already exists: ${user.getEmail()}`);
+         }
+         throw new ApiError(500, "Database error occurred");
       }
    }
 }

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRoute from "./core/api/userController";
 import { connectToDatabase } from "./config/dbConnect";
+import { errorHandler } from "./exceptions/globalException";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,7 +18,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(userRoute);
-
+// Error Handler Middleware (MUST be after all routes)
+app.use(errorHandler);
 connectToDatabase()
 
 // room api
