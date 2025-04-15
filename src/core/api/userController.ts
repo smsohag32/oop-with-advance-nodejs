@@ -1,13 +1,17 @@
 import express from "express";
-import RequestUserDTO from "../mapper/request/requestUserDTO";
-import UserService from "../services/impl/userService";
+import RequestUserDTO from "../dto/request/requestUserDTO";
+import UserService from "../services/interfaces/userService";
+import UserServiceImpl from "../services/impl/userServiceImpl";
 
-const router = express.Router();
+export const userService : UserService = new UserServiceImpl();
 
-router.post("/add-user", async (req, res) => {
+const userRoute = express.Router();
+
+userRoute.post("/add-user", async (req, res) => {
    const { name, email } = req.body;
-   const newUser = new RequestUserDTO(name, email);
-   const userService = new UserService();
-   userService.addUser(newUser);
+   // new RequestUserDTO(name, email)
+   userService.addUser(req.body);
    res.status(201).json({ message: "User added", user: { name, email } });
 });
+
+export default userRoute;
